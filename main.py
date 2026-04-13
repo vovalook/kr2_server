@@ -21,8 +21,7 @@ class UserCreate(BaseModel):
     is_subscribed: Optional[bool] = False
 
 @app.post("/create_user", tags=["Задание 3.1"])
-def create_user(user: UserCreate):
-    """Принимает JSON, валидирует данные через Pydantic и возвращает их обратно."""
+def create_user(user: UserCreate)
     return user.model_dump()
 
 
@@ -36,15 +35,13 @@ sample_products = [
 
 @app.get("/product/{product_id}", tags=["Задание 3.2"])
 def get_product(product_id: int):
-    """Возвращает продукт по ID."""
     for p in sample_products:
         if p["product_id"] == product_id:
             return p
     raise HTTPException(status_code=404, detail="Product not found")
 
 @app.get("/products/search", tags=["Задание 3.2"])
-def search_products(keyword: str, category: Optional[str] = None, limit: int = 10):
-    """Поиск товаров по ключевому слову с фильтрацией и лимитом."""
+def search_products(keyword: str, category: Optional[str] = None, limit: int = 10)
     results = []
     kw_lower = keyword.lower()
     for p in sample_products:
@@ -64,7 +61,6 @@ class LoginData(BaseModel):
 
 @app.post("/login", tags=["Задания 5.1-5.3"])
 def login(data: LoginData, response: Response):
-    """Вход в систему. Устанавливает подписанную куку сессии."""
     if VALID_USERS.get(data.username) != data.password:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
@@ -85,8 +81,7 @@ def login(data: LoginData, response: Response):
     )
     return {"message": "Login successful", "user_id": user_id}
 
-def _verify_session(token: str) -> tuple[dict, bool]:
-    """Вспомогательная функция: проверка подписи, целостности и скользящего окна."""
+def _verify_session(token: str) -> tuple[dict, bool]
     try:
 
         payload = serializer.loads(token, max_age=300)
@@ -109,7 +104,6 @@ def _verify_session(token: str) -> tuple[dict, bool]:
 @app.get("/user", tags=["Задания 5.1-5.3"])
 @app.get("/profile", tags=["Задания 5.1-5.3"])
 def get_protected_user(request: Request, response: Response):
-    """Защищённый маршрут. Проверяет куку, обновляет при необходимости."""
     token = request.cookies.get("session_token")
     if not token:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -145,12 +139,10 @@ class CommonHeaders(BaseModel):
 
 @app.get("/headers", tags=["Задания 5.4-5.5"])
 def get_headers(headers: CommonHeaders):
-    """Возвращает извлечённые заголовки."""
     return {"User-Agent": headers.user_agent, "Accept-Language": headers.accept_language}
 
 @app.get("/info", tags=["Задания 5.4-5.5"])
-def get_info(headers: CommonHeaders, response: Response):
-    """Возвращает заголовки, приветствие и кастомный заголовок X-Server-Time."""
+def get_info(headers: CommonHeaders, response: Response:
     response.headers["X-Server-Time"] = datetime.datetime.now().isoformat()
     return {
         "message": "Добро пожаловать! Ваши заголовки успешно обработаны.",
